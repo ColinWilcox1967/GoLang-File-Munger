@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"io/ioutil"
 
 	fileutils "./fileutils"
 )
@@ -30,13 +31,6 @@ func doFileMunge(data []byte) []byte {
 
 	fmt.Printf ("Applying %d interations over %d bytes ...\n", len(words), maxBlockSize)
 	for iteration := 0; iteration < len(words); iteration++ {
-		
-		for blockIndex := 0; blockIndex < maxBlockSize-1; blockIndex++ {
-			t := data[blockIndex]
-			data[blockIndex] = data[blockIndex+1]
-			data[blockIndex+1] = t
-		}
-
 		var offset int
 		for blockIndex := 0; blockIndex < maxBlockSize; blockIndex++ {
 			data[blockIndex] = data[blockIndex] ^ words[iteration][offset]
@@ -106,9 +100,13 @@ func main () {
 	// the good stuff
 	data = doFileMunge(data)
 
-	fmt.Println (data)
-	data = doFileMunge(data)
+	outputFile := fileutils.GetFileNameWithoutExtension(filePath)
+	outputFile += ".OUT"
 
-	fmt.Println (data)
+	err := ioutil.WriteFile(outputFile, data, 0644)
+	if err != nil { 
+		fmt.Printf ("Unable to write to file '%s'.\n", outputFile)
+		os.Exit(-5)
+	}
 	
 }

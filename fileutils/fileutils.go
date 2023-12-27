@@ -4,6 +4,8 @@ import (
 	"os"
 	"errors"
 	"io/ioutil"
+	"strings"
+	"path/filepath"
 )
 
 func FileExists(filePath string) bool {
@@ -21,4 +23,8 @@ func ReadFileAsBytes(filePath string) (bool, []byte) {
 	}
 
 	return true, v
+}
+
+func GetFileNameWithoutExtension(fileName string) string {
+	return strings.TrimSuffix(fileName, filepath.Ext(fileName))
 }
